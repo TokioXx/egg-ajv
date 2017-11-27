@@ -49,12 +49,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eggjs/egg-ajv.git"
+    "url": "git+https://github.com/freebyron/egg-ajv.git"
   },
   "bugs": {
-    "url": "https://github.com/eggjs/egg/issues"
+    "url": "https://github.com/freebyron/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg-ajv#readme",
+  "homepage": "https://github.com/freebyron/egg-ajv#readme",
   "author": "byron",
   "license": "MIT"
 }
