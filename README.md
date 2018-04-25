@@ -25,8 +25,9 @@ Configure ajv information in `${app_root}/config/config.default.js`:
 
 ```javascript
 config.ajv = {
-  // to indicate the namespace and path of schemas, default as 'schema'
-  keyword: 'schema'
+  keyword: 'schema',  // to indicate the namespace and path of schemas, default as 'schema'
+  allErrors: true,    // required for custom error message
+  jsonPointers: true,  // required for custom error message
 }
 ```
 
@@ -136,6 +137,27 @@ exports.create = async ctx => {
 };
 
 ```
+
+### Custom Error Message
+
+```
+{
+  "type": "object",
+  "properties": {
+    "size": {
+      "type": "number",
+      "minimum": 4
+    }
+  },
+  "errorMessage": {
+    "properties": {
+      "size": "size should be a number bigger or equal to 4, current value is ${/size}"
+    }
+  }
+}
+```
+
+check detail at [ajv-errors](https://github.com/epoberezkin/ajv-errors)
 
 ### Exception
 

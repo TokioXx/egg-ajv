@@ -2,6 +2,7 @@
 
 const request = require('supertest');
 const mm = require('egg-mock');
+const assert = require('assert');
 
 describe('test/ajv.test.js', () => {
   let app;
@@ -14,6 +15,15 @@ describe('test/ajv.test.js', () => {
 
   after(() => app.close());
   afterEach(mm.restore);
+
+  it('custom error message', function() {
+    return request(app.callback())
+      .get('/users?start=-1')
+      .expect(422)
+      .expect(resp => {
+        assert.equal(resp.body.errors[0].message, 'start should be an integer bigger or equal to 0, current value ("-1") is invalid');
+      });
+  });
 
   it('should be invalid', function() {
     return request(app.callback())

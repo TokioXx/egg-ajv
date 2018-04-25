@@ -1,6 +1,6 @@
 {
   "name": "egg-ajv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "eggPlugin": {
     "name": "ajv"
@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "ajv": "^5.4.0",
+    "ajv-errors": "1.0.0",
     "ajv-merge-patch": "^3.0.0"
   },
   "devDependencies": {
