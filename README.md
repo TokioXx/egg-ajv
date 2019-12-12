@@ -2,33 +2,60 @@
 
 The validater based on [ajv](https://github.com/epoberezkin/ajv) for egg.js.
 
-Egg-ajv consider each schema as a small piece, which compose a complete schema by using the key words - [$ref](https://github.com/epoberezkin/ajv#combining-schemas-with-ref), [\$merge and \$patch](https://github.com/epoberezkin/ajv#merge-and-patch-keywords) - to reduce the code repetition. 
+Egg-ajv consider each schema as a small piece, which compose a complete schema by using the key words - [\$ref](https://github.com/epoberezkin/ajv#combining-schemas-with-ref), [\$merge and \$patch](https://github.com/epoberezkin/ajv#merge-and-patch-keywords) - to reduce the code repetition.
 
-## Instal
+## Install
 
 ```bash
 $ npm i egg-ajv --save
 ```
 
-## Configuration
+## Usage & configuration
 
-Change `${app_root}/config/plugin.js` to enable egg-ajv plugin:
+- Enable plugin in `config/plugin.js`
 
 ```js
 exports.ajv = {
   enable: true,
-  package: 'egg-ajv',
+  package: "egg-ajv"
 };
 ```
 
-Configure ajv information in `${app_root}/config/config.default.js`:
+- Edit your own configurations in `config/config.{env}.js`
 
 ```javascript
 config.ajv = {
-  keyword: 'schema',  // to indicate the namespace and path of schemas, default as 'schema'
-  allErrors: true,    // required for custom error message
-  jsonPointers: true,  // required for custom error message
-}
+  /**
+   * default: "schema"
+   * to indicate the namespace and path of schemas, default as 'schema'
+   */
+  keyword: "schema",
+  /**
+   * default: true
+   * see https://github.com/epoberezkin/ajv#filtering-data
+   */
+  removeAdditional: true,
+  /**
+   * default: true
+   * see https://github.com/epoberezkin/ajv#assigning-defaults
+   */
+  useDefaults: true,
+  /**
+   * default: true
+   * see https://github.com/epoberezkin/ajv#coercing-data-types
+   */
+  coerceTypes: true,
+  /**
+   * default: false
+   * see https://github.com/epoberezkin/ajv-errors#options
+   */
+  keepErrors: false,
+  /**
+   * default: false
+   * see https://github.com/epoberezkin/ajv-errors#options
+   */
+  singleError: false
+};
 ```
 
 And all [the options of Ajv](https://github.com/epoberezkin/ajv#options) is supported.
@@ -36,14 +63,14 @@ And all [the options of Ajv](https://github.com/epoberezkin/ajv#options) is supp
 ## API
 
 ```javascript
-/**
-  * json validation
-  *
-  * @param {string|object} schema - string for schema id and object for Ajv rules
-  * @param {object} value - default as ctx.request.body
-  * @return {undefine} throw an exception instead
-  */
-async validate(schema, value) {}
+  /**
+   * json validation
+   *
+   * @param {String| Object} schema string for schema id and object for Ajv rules
+   * @param {Object} value default as ctx.request.body
+   * @return {Object} type converted value
+   */
+  async validate(schema, value) {}
 ```
 
 ## Usage
@@ -55,12 +82,11 @@ We need to put our schemas at the `/app/${config.ajv.keyword}` directory, which 
 #### A Simple Example:
 
 ```javascript
-
 // app/schema/definition.js
 
 module.exports = {
-  int: { type: 'integer' },
-  str: { type: 'string' },
+  int: { type: "integer" },
+  str: { type: "string" }
 };
 
 // app/schema/user.js
@@ -68,79 +94,78 @@ module.exports = {
 module.exports = {
   properties: {
     id: {
-      $ref: 'schema.definition#/int',
+      $ref: "schema.definition#/int"
     },
     name: {
-      type: 'string',
+      type: "string"
     },
     password: {
-      type: 'string',
-    },
+      type: "string"
+    }
   },
-  required: [ 'name', 'password', 'id' ],
+  required: ["name", "password", "id"],
   $async: true,
-  additionalProperties: false,
+  additionalProperties: false
 };
 
 // app/controller/user.js
 
 exports.create = async ctx => {
-  await this.ctx.validate('schema.pagination', this.ctx.request.body);
+  await this.ctx.validate("schema.pagination", this.ctx.request.body);
 };
-
 ```
 
-#### Another Example with the use of $merge
+#### Another Example with the use of \$merge
 
 ```javascript
-
 // app/schema/user.js
 
 module.exports = {
   properties: {
     name: {
-      type: 'string',
+      type: "string"
     },
     password: {
-      type: 'string',
-    },
+      type: "string"
+    }
   },
-  required: [ 'name', 'password' ],
+  required: ["name", "password"],
   $async: true,
-  additionalProperties: false,
+  additionalProperties: false
 };
 
 // app/controller/user.js
 
-const rule =  {
+const rule = {
   $async: true,
   $merge: {
     source: {
       properties: {
-        user: { $ref: 'schema.user#' },
-      },
+        user: { $ref: "schema.user#" }
+      }
     },
     with: {
       properties: {
         age: {
-          type: 'number',
-        },
+          type: "number"
+        }
       },
       // array would be overrided instead of merged
-      required: [ 'password', 'name', 'age' ],
-    },
-  },
+      required: ["password", "name", "age"]
+    }
+  }
 };
 
 exports.create = async ctx => {
   await this.ctx.validate(rule, this.ctx.request.body);
+  // or
+  await this.ctx.validate(this.app.schema.user);
 };
-
 ```
 
 ### Custom Error Message
 
-```
+```JSON
 {
   "type": "object",
   "properties": {
@@ -163,31 +188,45 @@ check detail at [ajv-errors](https://github.com/epoberezkin/ajv-errors)
 
 An exception will be thrown when a validation failed, so we'd better catch it at the middleware, but Egg-ajv doesn't do it for the sake of expansibility.
 
-Try something like this: 
+Try something like this:
 
 ```javascript
-
 // app/middleware/error.js
-const { ValidationError } = require('ajv');
+const { ValidationError } = require("ajv");
 
-module.exports = () => function* (next) {
-  try {
-    yield next;
-  } catch (e) {
+module.exports = () =>
+  function*(next) {
+    try {
+      yield next;
+    } catch (e) {
+      if (e instanceof ValidationError) {
+        this.body = {
+          code: 422,
+          msg: "请求参数错误",
+          errors: e.errors
+        };
+        this.status = 422;
+      } else {
+        throw e;
+      }
+    }
+  };
+```
+
+Or catch the error by `onerror` in `config/config.{env}.js` files
+
+```js
+// config/config.default.js
+const { ValidationError } = require("ajv");
+
+exports.onerror = {
+  all: (e, ctx) => {
     if (e instanceof ValidationError) {
-      this.body = {
-        code: 422,
-        msg: '请求参数错误',
-        errors: e.errors,
-      };
-      this.status = 422;
-    } else {
-      throw e;
+      ctx.body = JSON.stringify(e.errors);
+      ctx.status = 422;
     }
   }
 };
-
 ```
 
 For more information, check the [test app example](./test/fixtures/apps/ajv-test)
-

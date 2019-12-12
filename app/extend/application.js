@@ -15,8 +15,8 @@ module.exports = {
       }, config));
       require('ajv-merge-patch')(ajv);
       require('ajv-errors')(ajv, {
-        keepErrors: config.keepErrors || false,
-        singleError: config.singleError || false,
+        keepErrors: config.keepErrors,
+        singleError: config.singleError,
       });
       this[APPAJV] = ajv;
     }

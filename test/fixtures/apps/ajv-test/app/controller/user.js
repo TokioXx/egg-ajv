@@ -4,6 +4,7 @@ module.exports = app => {
   class UserController extends app.Controller {
     async index() {
       await this.ctx.validate('schema.pagination', this.ctx.request.query);
+      this.ctx.body = {};
     }
 
     async create() {
@@ -37,8 +38,14 @@ module.exports = app => {
       await this.ctx.validate(this.patchRule, this.ctx.request.body);
       this.ctx.body = {};
     }
+
+    async modify() {
+      // without second arg
+      await this.ctx.validate('schema.user');
+      this.ctx.body = {};
+    }
+
   }
 
   return UserController;
 };
-
