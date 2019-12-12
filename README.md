@@ -192,7 +192,7 @@ Try something like this:
 
 ```javascript
 // app/middleware/error.js
-const { ValidationError } = require("ajv");
+const { ValidationError } = require("egg-ajv/error");
 
 module.exports = () =>
   function*(next) {
@@ -217,7 +217,7 @@ Or catch the error by `onerror` in `config/config.{env}.js` files
 
 ```js
 // config/config.default.js
-const { ValidationError } = require("ajv");
+const { ValidationError } = require("egg-ajv/error");
 
 exports.onerror = {
   all: (e, ctx) => {

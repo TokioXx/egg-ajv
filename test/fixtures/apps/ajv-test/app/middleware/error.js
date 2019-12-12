@@ -1,6 +1,6 @@
 'use strict';
 
-const { ValidationError } = require('ajv');
+const { ValidationError } = require('../../../../../../error');
 
 module.exports = () => function* (next) {
   try {
