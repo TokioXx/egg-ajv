@@ -18,6 +18,7 @@ module.exports = {
       validater = ajv.getSchema(schema);
       assert(validater, `Schema - ${schema} - IS NOT FOUND`);
     } else {
+      schema = Object.assign(schema, { $async: true });
       assert(ajv.validateSchema(schema), `Schema is not valid: ${schema}`);
       validater = ajv.compile(schema);
     }
