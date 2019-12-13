@@ -11,9 +11,9 @@
     "egg-plugin"
   ],
   "dependencies": {
-    "ajv": "^5.4.0",
-    "ajv-errors": "1.0.0",
-    "ajv-merge-patch": "^3.0.0"
+    "ajv": "^6.10.2",
+    "ajv-errors": "^1.0.1",
+    "ajv-merge-patch": "^4.1.0"
   },
   "devDependencies": {
     "autod": "^2.8.0",
@@ -43,7 +43,8 @@
     "app",
     "config",
     "agent.js",
-    "app.js"
+    "app.js",
+    "error.js"
   ],
   "ci": {
     "version": "6, 8"

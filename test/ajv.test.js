@@ -21,7 +21,7 @@ describe('test/ajv.test.js', () => {
       .get('/users?start=-1')
       .expect(422)
       .expect(resp => {
-        assert.equal(resp.body.errors[0].message, 'start should be an integer bigger or equal to 0, current value ("-1") is invalid');
+        assert.equal(resp.body.errors[0].message, 'start should be an integer bigger or equal to 0, current value (-1) is invalid');
       });
   });
 
@@ -56,4 +56,16 @@ describe('test/ajv.test.js', () => {
       })
       .expect({});
   });
+
+  it('without second params should work', function() {
+    return request(app.callback())
+      .put('/users')
+      .send({
+        id: 1,
+        name: 'eggjs',
+        password: 'itisawesome',
+      })
+      .expect(200);
+  });
+
 });
